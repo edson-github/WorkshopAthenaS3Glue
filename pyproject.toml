@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "workshop-athena-s3-glue"
+version = "0.1.0"
+description = "Workshop ETL Pipeline com Python, CSV e Parquet, S3, Glue e Athena"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [{include = "workshop"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+boto3 = "^1.28.57"
+pandas = "^2.1.0"
+pyarrow = "^14.0.1"
+awswrangler = "^3.4.1"
+python-dotenv = "^1.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.2"
+black = "^23.9.1"
+isort = "^5.12.0"
+flake8 = "^6.1.0"
+mypy = "^1.5.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+etl = "workshop.etl_pipeline:main"
+athena-query = "workshop.athena_query:main" 

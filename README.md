@@ -7,6 +7,8 @@ Este repositório contém instruções e código para implementar um pipeline ET
 1. [Pré-requisitos](#pré-requisitos)
 2. [Arquitetura da Solução](#arquitetura-da-solução)
 3. [Configuração do Ambiente](#configuração-do-ambiente)
+   - [Com Poetry](#configuração-com-poetry)
+   - [Com pip/venv](#configuração-com-pipvenv)
 4. [Extração (Extract)](#extração-extract)
 5. [Transformação (Transform)](#transformação-transform)
 6. [Carga (Load)](#carga-load)
@@ -22,6 +24,7 @@ Este repositório contém instruções e código para implementar um pipeline ET
   - AWS Glue
   - Amazon Athena
 - Python 3.8 ou superior
+- Poetry (recomendado) ou pip/venv
 - AWS CLI configurado
 - boto3 (SDK AWS para Python)
 - pandas, pyarrow (para manipulação de dados e conversão para Parquet)
@@ -47,27 +50,85 @@ Este repositório contém instruções e código para implementar um pipeline ET
 
 ## Configuração do Ambiente
 
-### 1. Instalação das Dependências
+### Configuração com Poetry
+
+Poetry é uma ferramenta moderna para gerenciamento de dependências e empacotamento em Python. É a maneira recomendada para configurar este projeto.
+
+#### 1. Instalação do Poetry
+
+Se você ainda não tem o Poetry instalado:
 
 ```bash
-# Criar e ativar ambiente virtual (opcional, mas recomendado)
+# Linux/macOS/WSL
+curl -sSL https://install.python-poetry.org | python3 -
+
+# Windows (PowerShell)
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
+```
+
+#### 2. Configuração do projeto
+
+```bash
+# Clonar o repositório
+git clone https://github.com/seu-usuario/workshop-athena-s3-glue.git
+cd workshop-athena-s3-glue
+
+# Instalar dependências com Poetry
+poetry install
+
+# Ativar o ambiente virtual
+poetry shell
+```
+
+#### 3. Configuração das variáveis de ambiente
+
+```bash
+# Copiar o arquivo de exemplo
+cp .env.example .env
+
+# Editar o arquivo .env com suas configurações
+nano .env  # ou use seu editor preferido
+```
+
+#### 4. Executando o pipeline ETL
+
+```bash
+# Com Poetry ativado
+poetry run etl --csv-file dados/vendas.csv
+
+# Ou com argumentos personalizados
+poetry run etl --csv-file dados/vendas.csv --raw-bucket meu-bucket-raw --processed-bucket meu-bucket-processed --crawler-name meu-crawler
+```
+
+### Configuração com pip/venv
+
+Se preferir usar o método tradicional com pip e venv:
+
+```bash
+# Criar e ativar ambiente virtual
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
 # ou
 venv\Scripts\activate     # Windows
 
 # Instalar pacotes necessários
-pip install boto3 pandas pyarrow awswrangler
+pip install boto3 pandas pyarrow awswrangler python-dotenv
+
+# Copiar o arquivo de exemplo de configuração
+cp .env.example .env
+
+# Editar o arquivo .env com suas configurações
+nano .env  # ou use seu editor preferido
 ```
 
-### 2. Configuração da AWS CLI
+### Configuração da AWS CLI
 
 ```bash
 aws configure
 # Forneça suas credenciais AWS, região padrão e formato de saída
 ```
 
-### 3. Criação de Buckets S3
+### Criação de Buckets S3
 
 ```bash
 # Bucket para dados brutos (CSV)
@@ -75,6 +136,9 @@ aws s3 mb s3://seu-bucket-raw-data
 
 # Bucket para dados processados (Parquet)
 aws s3 mb s3://seu-bucket-processed-data
+
+# Bucket para resultados da Athena
+aws s3 mb s3://seu-bucket-athena-results
 ```
 
 ## Extração (Extract)
